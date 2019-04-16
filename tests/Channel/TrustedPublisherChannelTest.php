@@ -15,8 +15,8 @@ class TrustedPublisherChannelTest extends TestCase
     $trusted = new stdClass();
     $imposter = new stdClass();
     $channel = new TrustedPublisherChannel('channelName', $trusted);
-    $channel->trigger(new CustomEvent('event'), $trusted);
+    $channel->trigger(new CustomEvent('event'), false, $trusted);
     $this->expectException(RuntimeException::class);
-    $channel->trigger(new CustomEvent('imposter'), $imposter);
+    $channel->trigger(new CustomEvent('imposter'), false, $imposter);
   }
 }

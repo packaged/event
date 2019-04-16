@@ -60,9 +60,12 @@ class Channel
    *
    * @param Event $event
    *
+   * @param bool  $throwExceptions
+   *
    * @return \Generator|null
+   * @throws Exception
    */
-  public function triggerAndConsume(Event $event)
+  public function triggerAndConsume(Event $event, bool $throwExceptions = false)
   {
     //Trigger event listeners
     if(isset($this->_eventListeners[$event->getType()]))
@@ -75,6 +78,10 @@ class Channel
         }
         catch(Exception $e)
         {
+          if($throwExceptions)
+          {
+            throw $e;
+          }
           yield $e;
         }
       }
@@ -91,6 +98,10 @@ class Channel
         }
         catch(Exception $e)
         {
+          if($throwExceptions)
+          {
+            throw $e;
+          }
           yield $e;
         }
       }
@@ -103,11 +114,14 @@ class Channel
    *
    * @param Event $event
    *
+   * @param bool  $throwExceptions
+   *
    * @return $this
+   * @throws Exception
    */
-  public function trigger(Event $event)
+  public function trigger(Event $event, bool $throwExceptions = false)
   {
-    iterator_to_array($this->triggerAndConsume($event));
+    iterator_to_array($this->triggerAndConsume($event, $throwExceptions));
     return $this;
   }
 }

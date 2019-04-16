@@ -4,6 +4,7 @@ namespace Packaged\Event\Tests\Channel;
 use Packaged\Event\Channel\Channel;
 use Packaged\Event\Events\DataEvent;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 class ChannelTest extends TestCase
 {
@@ -43,5 +44,21 @@ class ChannelTest extends TestCase
     }
     $this->assertEquals(2, $exceptionCount);
     $this->assertTrue(in_array(4, $results, true));
+  }
+
+  public function testExceptions()
+  {
+    $channel = new Channel('consume');
+    $channel->listenChannel(function () { throw new \RuntimeException("Hi"); });
+    $this->expectException(RuntimeException::class);
+    $channel->trigger(new DataEvent('event'), true);
+  }
+
+  public function testEventExceptions()
+  {
+    $channel = new Channel('consume');
+    $channel->listen('event', function () { throw new \RuntimeException("Hi"); });
+    $this->expectException(RuntimeException::class);
+    $channel->trigger(new DataEvent('event'), true);
   }
 }
