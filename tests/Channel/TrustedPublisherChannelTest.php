@@ -3,7 +3,7 @@
 namespace Packaged\Event\Tests\Channel;
 
 use Packaged\Event\Channel\TrustedPublisherChannel;
-use Packaged\Event\Events\Event;
+use Packaged\Event\Events\CustomEvent;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;
@@ -15,8 +15,8 @@ class TrustedPublisherChannelTest extends TestCase
     $trusted = new stdClass();
     $imposter = new stdClass();
     $channel = new TrustedPublisherChannel('channelName', $trusted);
-    $channel->trigger(new Event('event'), $trusted);
+    $channel->trigger(new CustomEvent('event'), $trusted);
     $this->expectException(RuntimeException::class);
-    $channel->trigger(new Event('imposter'), $imposter);
+    $channel->trigger(new CustomEvent('imposter'), $imposter);
   }
 }
