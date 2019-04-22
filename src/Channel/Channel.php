@@ -7,6 +7,7 @@ use Packaged\Event\Events\Event;
 class Channel
 {
   protected $_channelName;
+  protected $_shouldThrowExceptions = false;
 
   protected $_eventListeners = [];
   protected $_channelListeners = [];
@@ -22,6 +23,25 @@ class Channel
   public function getName()
   {
     return $this->_channelName;
+  }
+
+  /**
+   * @return bool
+   */
+  public function shouldThrowExceptions(): bool
+  {
+    return $this->_shouldThrowExceptions;
+  }
+
+  /**
+   * @param bool $shouldThrowExceptions
+   *
+   * @return $this
+   */
+  public function setShouldThrowExceptions(bool $shouldThrowExceptions)
+  {
+    $this->_shouldThrowExceptions = $shouldThrowExceptions;
+    return $this;
   }
 
   /**
@@ -60,12 +80,10 @@ class Channel
    *
    * @param Event $event
    *
-   * @param bool  $throwExceptions
-   *
    * @return \Generator|null
    * @throws Exception
    */
-  public function triggerAndConsume(Event $event, bool $throwExceptions = false)
+  public function triggerAndConsume(Event $event)
   {
     //Trigger event listeners
     if(isset($this->_eventListeners[$event->getType()]))
@@ -78,7 +96,7 @@ class Channel
         }
         catch(Exception $e)
         {
-          if($throwExceptions)
+          if($this->shouldThrowExceptions())
           {
             throw $e;
           }
@@ -98,7 +116,7 @@ class Channel
         }
         catch(Exception $e)
         {
-          if($throwExceptions)
+          if($this->shouldThrowExceptions())
           {
             throw $e;
           }
@@ -114,14 +132,12 @@ class Channel
    *
    * @param Event $event
    *
-   * @param bool  $throwExceptions
-   *
    * @return $this
    * @throws Exception
    */
-  public function trigger(Event $event, bool $throwExceptions = false)
+  public function trigger(Event $event)
   {
-    iterator_to_array($this->triggerAndConsume($event, $throwExceptions));
+    iterator_to_array($this->triggerAndConsume($event));
     return $this;
   }
 }

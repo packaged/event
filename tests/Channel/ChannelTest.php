@@ -49,16 +49,18 @@ class ChannelTest extends TestCase
   public function testExceptions()
   {
     $channel = new Channel('consume');
+    $channel->setShouldThrowExceptions(true);
     $channel->listenChannel(function () { throw new \RuntimeException("Hi"); });
     $this->expectException(RuntimeException::class);
-    $channel->trigger(new DataEvent('event'), true);
+    $channel->trigger(new DataEvent('event'));
   }
 
   public function testEventExceptions()
   {
     $channel = new Channel('consume');
+    $channel->setShouldThrowExceptions(true);
     $channel->listen('event', function () { throw new \RuntimeException("Hi"); });
     $this->expectException(RuntimeException::class);
-    $channel->trigger(new DataEvent('event'), true);
+    $channel->trigger(new DataEvent('event'));
   }
 }
