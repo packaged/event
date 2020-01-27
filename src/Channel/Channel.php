@@ -140,4 +140,19 @@ class Channel
     iterator_to_array($this->triggerAndConsume($event));
     return $this;
   }
+
+  /**
+   * @param string|null $eventType Check for listeners on an event type, or null for channel listeners
+   *
+   * @return bool if there are listeners available
+   */
+  public function hasListeners(string $eventType = null): bool
+  {
+    if($eventType === null)
+    {
+      return !empty($this->_channelListeners);
+    }
+
+    return isset($this->_eventListeners[$eventType]) && !empty($this->_eventListeners[$eventType]);
+  }
 }

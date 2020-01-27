@@ -46,6 +46,21 @@ class ChannelTest extends TestCase
     $this->assertTrue(in_array(4, $results, true));
   }
 
+  public function testHasListeners()
+  {
+    $channel = new Channel('consume');
+    $this->assertFalse($channel->hasListeners(null));
+    $this->assertFalse($channel->hasListeners('event'));
+    $channel->listenChannel(function (DataEvent $e) { return $e->getData() * 2; });
+
+    $this->assertTrue($channel->hasListeners(null));
+    $this->assertFalse($channel->hasListeners('event'));
+
+    $channel->listen('event', function () { throw new \RuntimeException("Hi"); });
+    $this->assertTrue($channel->hasListeners(null));
+    $this->assertTrue($channel->hasListeners('event'));
+  }
+
   public function testExceptions()
   {
     $channel = new Channel('consume');
